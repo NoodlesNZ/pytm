@@ -9,6 +9,7 @@ license = "MIT License"
 python = "^3.8 || ^3.9 || ^3.10 || ^3.11"
 pydal = "~20200714.1"
 pytest = "^8.3.5"
+pydantic = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 
