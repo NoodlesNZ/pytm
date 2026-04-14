@@ -217,13 +217,18 @@ class Threat(BaseModel):
         else:
             target = tuple(target)
 
-        # Resolve target name strings to actual Python classes
+        # Resolve target name strings to actual Python classes.
+        # Check pytm first, then pytm.aws submodules.
         resolved = []
         for name in target:
             if isinstance(name, type):
                 resolved.append(name)
             else:
                 klass = getattr(sys.modules.get("pytm"), name, None)
+                if klass is None:
+                    aws_mod = sys.modules.get("pytm.aws")
+                    if aws_mod is not None:
+                        klass = getattr(aws_mod, name, None)
                 resolved.append(klass if klass is not None else name)
         data["target"] = tuple(resolved)
 
@@ -288,6 +293,15 @@ class Threat(BaseModel):
                 "Action": pytm.Action,
                 "Lifetime": pytm.Lifetime,
             }
+
+            # Expose AWS service classes so conditions can reference them
+            try:
+                import pytm.aws as _aws
+
+                for _name in _aws.__all__:
+                    globals_dict[_name] = getattr(_aws, _name)
+            except ImportError:
+                pass
 
             # Expose safe builtins as globals as well for convenience
             globals_dict.update(cls._SAFE_BUILTINS)
