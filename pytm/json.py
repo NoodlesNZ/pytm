@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import json
+from typing import TYPE_CHECKING, Any, TextIO
 
 from .tm import TM
 from .boundary import Boundary
@@ -8,6 +11,9 @@ from .datastore import Datastore
 from .actor import Actor
 from .process import Process, SetOfProcesses
 from .enums import Action
+
+if TYPE_CHECKING:
+    from .element import Element
 
 _ELEMENT_CLASSES = {
     "Asset": Asset,
@@ -22,7 +28,7 @@ _ELEMENT_CLASSES = {
 }
 
 
-def loads(s):
+def loads(s: str) -> TM:
     """Load a TM object from a JSON string *s*."""
     result = json.loads(s, object_hook=decode)
     if not isinstance(result, TM):
@@ -30,7 +36,7 @@ def loads(s):
     return result
 
 
-def load(fp):
+def load(fp: TextIO) -> TM:
     """Load a TM object from an open file containing JSON."""
     result = json.load(fp, object_hook=decode)
     if not isinstance(result, TM):
@@ -38,7 +44,7 @@ def load(fp):
     return result
 
 
-def decode(data):
+def decode(data: dict[str, Any]) -> dict[str, Any] | TM:
     if "elements" not in data and "flows" not in data and "boundaries" not in data:
         return data
 
@@ -53,7 +59,7 @@ def decode(data):
     return TM(data.pop("name"), **data)
 
 
-def decode_boundaries(flat):
+def decode_boundaries(flat: list[dict[str, Any]]) -> dict[str, Boundary]:
     boundaries = {}
     refs = {}
     for i, e in enumerate(flat):
@@ -74,7 +80,7 @@ def decode_boundaries(flat):
     return boundaries
 
 
-def decode_elements(flat, boundaries):
+def decode_elements(flat: list[dict[str, Any]], boundaries: dict[str, Boundary]) -> dict[str, Element]:
     elements = {}
     for i, e in enumerate(flat):
         class_name = e.pop("__class__", "Asset")
@@ -96,7 +102,7 @@ def decode_elements(flat, boundaries):
     return elements
 
 
-def decode_flows(flat, elements):
+def decode_flows(flat: list[dict[str, Any]], elements: dict[str, Element]) -> None:
     for i, e in enumerate(flat):
         name = e.pop("name", None)
         if name is None:
