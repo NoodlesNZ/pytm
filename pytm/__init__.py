@@ -4,6 +4,8 @@ __all__ = [
     "Assumption",
     "Boundary",
     "Classification",
+    "Likelihood",
+    "Severity",
     "TLSVersion",
     "Data",
     "Dataflow",
@@ -32,7 +34,7 @@ from .json import load, loads
 from .pytm import var
 
 # Import from new Pydantic models
-from .enums import Action, Classification, DatastoreType, Lifetime, TLSVersion
+from .enums import Action, Classification, DatastoreType, Lifetime, Likelihood, Severity, TLSVersion
 from .base import Assumption, Controls
 from .element import Element
 from .data import Data
