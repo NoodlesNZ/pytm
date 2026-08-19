@@ -23,6 +23,6 @@ COPY pytm ./pytm
 COPY docs ./docs
 COPY *.py Makefile entrypoint.sh ./
 
-RUN pip install poetry \
+RUN pip install "poetry>=2.1" \
     && poetry config virtualenvs.create false \
     && poetry install

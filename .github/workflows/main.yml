@@ -32,7 +32,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Poetry
-        run: pip install poetry
+        run: pip install "poetry>=2.1"
       - name: Update poetry.lock
         run: poetry lock 
       - name: Install dependencies

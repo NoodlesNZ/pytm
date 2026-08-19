@@ -36,6 +36,38 @@ To execute the test suite, from the root of the repo run `make test`. To control
 
 To regenerate test fixtures for `json.dumps` and report tests add a `print(output)` statement in the test and run `make test 2>/dev/null > tests/output.json` or  `make test 2>/dev/null > tests/output.md`.
 
+## Development
+
+### Environment
+
+`pyproject.toml` describes the project with standard `[project]` metadata, so any PEP 517 tool
+can install pytm together with its development dependencies:
+
+    uv sync --dev
+    pip install -e . --group dev    # pip 25.1 or newer
+
+Note that the `Makefile` targets drive the tools through Poetry, so reach for `pytest` and the
+`pytm` modules directly in an environment installed this way.
+
+### Dependencies
+
+Dependency changes go into `pyproject.toml` - runtime ones under `[project.dependencies]`,
+tooling under the `dev` group of `[dependency-groups]`. The repo also carries a `poetry.lock`
+that the CI workflow regenerates on each run, so refresh it in your PR when you change
+dependencies to keep the two in step.
+
+### Building
+
+The build backend is [hatchling](https://hatch.pypa.io/latest/), driven entirely by the
+`[project]` table, so every frontend produces the same artifacts:
+
+    uv build
+    python -m build
+
+### Bumping the version
+
+The version lives in `[project].version` - edit it there.
+
 ## PyTM-users
 
 Before you post to the [PyTM-users list](https://groups.google.com/forum/#!forum/pytm-users), make sure you look for existing solutions.
